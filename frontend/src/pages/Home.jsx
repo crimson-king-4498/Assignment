@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getAllProducts } from '../services/product';
 import { addCartItem } from '../services/cart';
 
@@ -29,6 +31,7 @@ const Home = () => {
 
             const item = {
                 product: product._id,
+                productName : product.productName,
                 price: product.price,
                 quantity: 1,
                 size: 'M', // Hardcoded for now
@@ -48,9 +51,11 @@ const Home = () => {
         <div>
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid #ccc' }}>
                 <h1>EComm</h1>
-                <button>
-                    <span role="img" aria-label="cart">🛒</span>
-                </button>
+                <Link to="/cart">
+                    <button>
+                        <span role="img" aria-label="cart">🛒</span>
+                    </button>
+                </Link>
             </header>
             <main style={{ padding: '1rem' }}>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
