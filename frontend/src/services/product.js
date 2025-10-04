@@ -1,7 +1,6 @@
 const baseUrl = 'http://localhost:3001/api/products';
 
 export const getAllProducts = async (params = {}) => {
-    // Filter out empty values (null, undefined, empty string)
     const filteredParams = Object.fromEntries(
         Object.entries(params).filter(([_, v]) => v != null && v !== '')
     );
