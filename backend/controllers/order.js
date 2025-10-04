@@ -3,7 +3,6 @@ import User from '../models/user.js';
 
 const orderRouter = express.Router();
 
-// Get all orders for a user
 orderRouter.get('/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId).populate('orderHistory');

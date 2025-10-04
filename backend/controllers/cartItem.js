@@ -5,7 +5,7 @@ import Product from '../models/product.js';
 
 const cartRouter = express.Router();
 
-// Get all cart items for a user
+
 cartRouter.get('/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId).populate('cart');
@@ -46,7 +46,6 @@ cartRouter.get('/:userId', async (req, res) => {
     }
 });
 
-// Add a new item to the cart
 cartRouter.post('/:userId', async (req, res) => {
     try {
         const { product, productName, price, quantity, size, gift } = req.body;
@@ -83,19 +82,16 @@ cartRouter.post('/:userId', async (req, res) => {
     }
 });
 
-// Update a cart item
 cartRouter.put('/:userId/:cartItemId', async (req, res) => {
     try {
         const { userId, cartItemId } = req.params;
         const { quantity, size, gift } = req.body;
 
-        // Ensure user exists
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Ensure this cart item actually belongs to the user
         const isItemInCart = user.cart.some(
             itemId => itemId.toString() === cartItemId
         );
@@ -103,11 +99,10 @@ cartRouter.put('/:userId/:cartItemId', async (req, res) => {
             return res.status(403).json({ message: 'Cart item not in user\'s cart' });
         }
 
-        // Update CartItem directly
         const updatedCartItem = await CartItem.findByIdAndUpdate(
             cartItemId,
             { $set: { quantity, size, gift } },
-            { new: true } // return updated doc
+            { new: true }
         );
 
         if (!updatedCartItem) {
@@ -121,8 +116,6 @@ cartRouter.put('/:userId/:cartItemId', async (req, res) => {
 });
 
 
-
-// Delete a cart item
 cartRouter.delete('/:userId/:cartItemId', async (req, res) => {
     try {
         const { userId, cartItemId } = req.params;
@@ -132,17 +125,14 @@ cartRouter.delete('/:userId/:cartItemId', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Check if the cart item exists in the user's cart before attempting to remove it
         const cartItemIndex = user.cart.findIndex(item => item._id.toString() === cartItemId);
         if (cartItemIndex === -1) {
             return res.status(404).json({ message: 'Cart item not found in this user\'s cart' });
         }
 
-        // Remove the cart item from the user's cart array
         user.cart.splice(cartItemIndex, 1);
         await user.save();
 
-        // Delete the cart item from the CartItem collection
         await CartItem.findByIdAndDelete(cartItemId);
 
         res.json({ message: 'Cart item deleted' });

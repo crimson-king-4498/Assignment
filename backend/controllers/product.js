@@ -3,7 +3,6 @@ import Product from '../models/product.js';
 
 const productRouter = express.Router();
 
-// Get all products with search, sort, filter and pagination functionality
 productRouter.get('/', async (req, res) => {
     try {
         const { search, sortBy, type, page = 1, limit = 8 } = req.query;
@@ -42,7 +41,6 @@ productRouter.get('/', async (req, res) => {
     }
 });
 
-// Create a new product
 productRouter.post('/', async (req, res) => {
     try {
         const { productName, price, image, size, type } = req.body;
@@ -62,7 +60,6 @@ productRouter.post('/', async (req, res) => {
     }
 });
 
-// Delete a product
 productRouter.delete('/:productId', async (req, res) => {
     try {
         const product = await Product.findById(req.params.productId);

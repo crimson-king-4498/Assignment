@@ -5,7 +5,6 @@ import User from '../models/user.js';
 
 const userRouter = express.Router();
 
-// Get all users
 userRouter.get('/', async (req, res) => {
     try {
         const users = await User.find({});
@@ -15,7 +14,6 @@ userRouter.get('/', async (req, res) => {
     }
 });
 
-// Get user by ID
 userRouter.get('/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
@@ -28,7 +26,6 @@ userRouter.get('/:userId', async (req, res) => {
     }
 });
 
-// Signup
 userRouter.post('/signup', async (req, res) => {
     try {
         const { name, address, emailID, password } = req.body;
@@ -51,7 +48,6 @@ userRouter.post('/signup', async (req, res) => {
     }
 });
 
-// Login
 userRouter.post('/login', async (req, res) => {
     try {
         const { emailID, password } = req.body;
