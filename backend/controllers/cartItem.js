@@ -1,6 +1,8 @@
+
 import express from 'express';
 import CartItem from '../models/cartItem.js';
 import User from '../models/user.js';
+import Product from '../models/product.js';
 
 const cartRouter = express.Router();
 
@@ -11,6 +13,28 @@ cartRouter.get('/:userId', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+
+        const invalidItems = [];
+        const validItems = [];
+        for (const cartItem of user.cart) {
+            const product = await Product.findById(cartItem.product);
+            if (!product) {
+                invalidItems.push(cartItem._id);
+            } else {
+                validItems.push(cartItem);
+            }
+        }
+
+        if (invalidItems.length > 0) {
+            user.cart = validItems;
+            await user.save();
+            await CartItem.deleteMany({ _id: { $in: invalidItems } });
+            return res.status(400).json({
+                message: 'Some items in your cart are no longer available and have been removed. Please review your cart.',
+                invalidItems: invalidItems
+            });
+        }
+
         res.json(user.cart);
     } catch (error) {
         res.status(500).json({ message: error.message });

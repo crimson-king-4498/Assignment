@@ -1,4 +1,3 @@
-
 const baseUrl = 'http://localhost:3001/api/products';
 
 export const getAllProducts = async (params) => {
