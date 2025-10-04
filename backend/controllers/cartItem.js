@@ -1,4 +1,3 @@
-
 import express from 'express';
 import CartItem from '../models/cartItem.js';
 import User from '../models/user.js';
@@ -44,7 +43,7 @@ cartRouter.get('/:userId', async (req, res) => {
 // Add a new item to the cart
 cartRouter.post('/:userId', async (req, res) => {
     try {
-        const { product, price, quantity, size, gift } = req.body;
+        const { product, productName, price, quantity, size, gift } = req.body;
         const user = await User.findById(req.params.userId).populate('cart');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -60,6 +59,7 @@ cartRouter.post('/:userId', async (req, res) => {
 
         const cartItem = new CartItem({
             product,
+            productName,
             price,
             quantity,
             size,

@@ -41,7 +41,7 @@ checkoutRouter.post('/:userId', async (req, res) => {
         const orderItems = await Promise.all(
             populatedCart.cart.map(async (cartItem) => {
                 const orderItem = new OrderItem({
-                    productName: cartItem.product.productName || 'Unknown Product',
+                    productName: cartItem.productName,
                     price: cartItem.price,
                     quantity: cartItem.quantity,
                     size: cartItem.size,
