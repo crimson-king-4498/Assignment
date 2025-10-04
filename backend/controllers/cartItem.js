@@ -1,3 +1,4 @@
+
 import express from 'express';
 import CartItem from '../models/cartItem.js';
 import User from '../models/user.js';
@@ -20,14 +21,23 @@ cartRouter.get('/:userId', async (req, res) => {
 // Add a new item to the cart
 cartRouter.post('/:userId', async (req, res) => {
     try {
-        const { product, quantity, size, gift } = req.body;
-        const user = await User.findById(req.params.userId);
+        const { product, price, quantity, size, gift } = req.body;
+        const user = await User.findById(req.params.userId).populate('cart');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const existingCartItem = user.cart.find(
+            (item) => item.product.toString() === product && item.size === size
+        );
+
+        if (existingCartItem) {
+            return res.status(400).json({ message: 'Item already in cart' });
+        }
+
         const cartItem = new CartItem({
             product,
+            price,
             quantity,
             size,
             gift

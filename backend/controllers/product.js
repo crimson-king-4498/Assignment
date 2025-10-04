@@ -1,12 +1,31 @@
+
 import express from 'express';
 import Product from '../models/product.js';
 
 const productRouter = express.Router();
 
-// Get all products
+// Get all products with search, sort and filter functionality
 productRouter.get('/', async (req, res) => {
     try {
-        const products = await Product.find({});
+        const { search, sortBy, type } = req.query;
+        let query = {};
+
+        if (search) {
+            query.product = { $regex: search, $options: 'i' };
+        }
+
+        if (type) {
+            query.type = type;
+        }
+
+        let sort = {};
+        if (sortBy === 'price_asc') {
+            sort.price = 1;
+        } else if (sortBy === 'price_desc') {
+            sort.price = -1;
+        }
+
+        const products = await Product.find(query).sort(sort);
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -16,10 +35,10 @@ productRouter.get('/', async (req, res) => {
 // Create a new product
 productRouter.post('/', async (req, res) => {
     try {
-        const { product, price, image, size, type } = req.body;
+        const { productName, price, image, size, type } = req.body;
 
         const newProduct = new Product({
-            product,
+            productName,
             price,
             image,
             size,

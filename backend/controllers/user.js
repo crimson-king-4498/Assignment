@@ -4,6 +4,29 @@ import User from '../models/user.js';
 
 const userRouter = express.Router();
 
+// Get all users
+userRouter.get('/', async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Get user by ID
+userRouter.get('/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Signup
 userRouter.post('/signup', async (req, res) => {
     try {
