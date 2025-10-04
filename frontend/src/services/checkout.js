@@ -4,9 +4,9 @@ export const checkout = async (userId) => {
     const response = await fetch(`${baseUrl}/${userId}`, {
         method: 'POST'
     });
+    const data = await response.json();
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        throw { status: response.status, data };
     }
-    return await response.json();
+    return data;
 };

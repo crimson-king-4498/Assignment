@@ -19,11 +19,9 @@ const Login = () => {
 
         try {
             const response = await login({ emailID, password });
-            console.log("Full response:", response);
 
             if (response && response.message) {
                 localStorage.setItem('userId', response.userId);
-                console.log('Logged in userId:', response.userId);
                 navigate('/home');
             } else {
                 setError('Invalid email or password');
