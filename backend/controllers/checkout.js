@@ -8,7 +8,12 @@ const checkoutRouter = express.Router();
 
 checkoutRouter.post('/:userId', async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId).populate('cart');
+        const user = await User.findById(req.params.userId).populate({
+            path: 'cart',
+            populate: {
+                path: 'product'
+            }
+        });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         if (user.cart.length === 0)
@@ -17,7 +22,7 @@ checkoutRouter.post('/:userId', async (req, res) => {
         const orderItems = await Promise.all(
             user.cart.map(async (cartItem) => {
                 const orderItem = new OrderItem({
-                    productName: cartItem.product?.name || 'Unknown Product',
+                    productName: cartItem.product.productName || 'Unknown Product',
                     price: cartItem.price,
                     quantity: cartItem.quantity,
                     size: cartItem.size,
@@ -38,8 +43,11 @@ checkoutRouter.post('/:userId', async (req, res) => {
 
         user.orderHistory.push(newOrder._id);
 
+        // Clear the cart and delete the cart items
+        const cartItemIds = user.cart.map(item => item._id);
         user.cart = [];
         await user.save();
+        await CartItem.deleteMany({ _id: { $in: cartItemIds } });
 
         res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id });
     } catch (error) {

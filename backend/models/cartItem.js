@@ -23,7 +23,7 @@ const cartItemSchema = new mongoose.Schema({
     gift: {
         type: Boolean,
         default: false
-    },
+    }
 });
 
 const CartItem = mongoose.model('CartItem', cartItemSchema);

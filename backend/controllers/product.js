@@ -61,7 +61,7 @@ productRouter.delete('/:productId', async (req, res) => {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        await product.remove();
+        await Product.findByIdAndDelete(req.params.productId);
 
         res.json({ message: 'Product deleted' });
     } catch (error) {
