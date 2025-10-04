@@ -25,14 +25,20 @@ cartRouter.get('/:userId', async (req, res) => {
         }
 
         if (invalidItems.length > 0) {
+            const removedItems = await CartItem.find({ _id: { $in: invalidItems } }).populate('product');
             user.cart = validItems;
             await user.save();
             await CartItem.deleteMany({ _id: { $in: invalidItems } });
+
             return res.status(400).json({
-                message: 'Some items in your cart are no longer available and have been removed. Please review your cart.',
-                invalidItems: invalidItems
+                message: 'Some items in your cart are no longer available and have been removed. Please refresh the page.',
+                invalidItems: removedItems.map(item => ({
+                    id: item._id,
+                    productName: item.productName
+                }))
             });
         }
+
 
         res.json(user.cart);
     } catch (error) {
@@ -83,35 +89,37 @@ cartRouter.put('/:userId/:cartItemId', async (req, res) => {
         const { userId, cartItemId } = req.params;
         const { quantity, size, gift } = req.body;
 
-        const user = await User.findById(userId).populate('cart');
+        // Ensure user exists
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const cartItem = user.cart.find(item => item._id.toString() === cartItemId);
-        if (!cartItem) {
-            return res.status(404).json({ message: 'Cart item not found in this user\'s cart' });
+        // Ensure this cart item actually belongs to the user
+        const isItemInCart = user.cart.some(
+            itemId => itemId.toString() === cartItemId
+        );
+        if (!isItemInCart) {
+            return res.status(403).json({ message: 'Cart item not in user\'s cart' });
         }
 
-        // Update the properties of the cart item
-        if (quantity) {
-            cartItem.quantity = quantity;
-        }
-        if (size) {
-            cartItem.size = size;
-        }
-        if (gift !== undefined) {
-            cartItem.gift = gift;
+        // Update CartItem directly
+        const updatedCartItem = await CartItem.findByIdAndUpdate(
+            cartItemId,
+            { $set: { quantity, size, gift } },
+            { new: true } // return updated doc
+        );
+
+        if (!updatedCartItem) {
+            return res.status(404).json({ message: 'Cart item not found' });
         }
 
-        // Save the parent user document to persist the changes to the subdocument
-        await user.save();
-
-        res.json(cartItem);
+        res.json(updatedCartItem);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 
 // Delete a cart item

@@ -27,16 +27,22 @@ checkoutRouter.post('/:userId', async (req, res) => {
         }
 
         if (invalidItems.length > 0) {
+            const removedItems = await CartItem.find({ _id: { $in: invalidItems } }).populate('product');
             user.cart = validItems;
             await user.save();
             await CartItem.deleteMany({ _id: { $in: invalidItems } });
+
             return res.status(400).json({
-                message: 'Some items in your cart are no longer available and have been removed. Please review your cart.',
-                invalidItems: invalidItems
+                message: 'Some items in your cart are no longer available and have been removed. Please refresh the page.',
+                invalidItems: removedItems.map(item => ({
+                    id: item._id,
+                    productName: item.productName
+                }))
             });
         }
 
-        const populatedCart = await user.populate('cart.product').execPopulate();
+
+        const populatedCart = await user.populate('cart.product');
 
         const orderItems = await Promise.all(
             populatedCart.cart.map(async (cartItem) => {
@@ -52,7 +58,7 @@ checkoutRouter.post('/:userId', async (req, res) => {
             })
         );
 
-        const totalAmount = populatedCart.cart.reduce((sum, item) => sum + item.price * item.quantity + 10*(item.gift === true),0);
+        const totalAmount = populatedCart.cart.reduce((sum, item) => sum + (item.price + (10*(item.gift === true)))* item.quantity,0);
 
         const newOrder = new Order({
             items: orderItems,

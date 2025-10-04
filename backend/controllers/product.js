@@ -1,21 +1,21 @@
-
 import express from 'express';
 import Product from '../models/product.js';
 
 const productRouter = express.Router();
 
-// Get all products with search, sort and filter functionality
+// Get all products with search, sort, filter and pagination functionality
 productRouter.get('/', async (req, res) => {
     try {
-        const { search, sortBy, type } = req.query;
+        const { search, sortBy, type, page = 1, limit = 8 } = req.query;
+
         let query = {};
 
         if (search) {
-            query.product = { $regex: search, $options: 'i' };
+            query.productName = { $regex: search, $options: 'i' };
         }
 
         if (type) {
-            query.type = type;
+            query.type = { $regex: `^${type}$`, $options: 'i' };
         }
 
         let sort = {};
@@ -25,8 +25,18 @@ productRouter.get('/', async (req, res) => {
             sort.price = -1;
         }
 
-        const products = await Product.find(query).sort(sort);
-        res.json(products);
+        const products = await Product.find(query)
+            .sort(sort)
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const count = await Product.countDocuments(query);
+
+        res.json({
+            products,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
