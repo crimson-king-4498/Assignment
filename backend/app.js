@@ -1,4 +1,4 @@
-import 'dotenv/config'; // Ensures environment variables are loaded first
+import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
