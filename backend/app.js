@@ -24,7 +24,7 @@ mongoose.connect(config.MONGODB_URI)
         console.error('Error connecting to MongoDB. Check URI and Atlas IP Whitelist:', error.message);
     });
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
