@@ -36,7 +36,7 @@ The platform is designed with two primary user roles: **Customer** and **Adminis
 * **Product Browsing:**
   * View a catalog of all available **clothing products**.
   * **Search:** Quickly find products by name or keyword.
-  * **Filter:** Narrow down products based on **type of clothing** (e.g., shirts, trousers, jackets, etc.).
+  * **Filter:** Narrow down products based on **type of clothing** (e.g., shirts, jeans, etc.).
   * **Sort:** Arrange products based on **price** — either from low to high or high to low.
 
 * **Shopping Cart Management (CRUD Operations):**
