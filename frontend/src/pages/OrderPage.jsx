@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getOrders } from '../services/order';
 import { getOrderItems } from '../services/orderItem';
 
@@ -111,6 +111,17 @@ const styles = {
         borderBottom: '1px dashed #eee',
         color: '#343a40',
         lineHeight: '1.4',
+    },
+    logoutButton: { 
+        padding: '8px 15px',
+        marginLeft: '10px',
+        backgroundColor: '#dc3545',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontWeight: 500,
+        transition: 'background-color 0.3s',
     }
 };
 
@@ -131,6 +142,13 @@ const OrderPage = () => {
     const [selectedOrderItems, setSelectedOrderItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [hoveredOrderId, setHoveredOrderId] = useState(null);
+    const navigate = useNavigate();
+
+
+    const handleLogout = () => {
+        localStorage.removeItem('userId');
+        navigate('/'); 
+    };
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -186,6 +204,9 @@ const OrderPage = () => {
                             Cart
                         </button>
                     </Link>
+                    <button onClick={handleLogout} style={styles.logoutButton}>
+                        Logout
+                    </button>
                 </div>
             </header>
             <main style={styles.main}>

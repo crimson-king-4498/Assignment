@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAllProducts } from '../services/product';
 import { addCartItem } from '../services/cart';
 
@@ -22,6 +22,17 @@ const styles = {
         padding: '8px 15px',
         marginLeft: '10px',
         backgroundColor: '#6c757d',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontWeight: 500,
+        transition: 'background-color 0.3s',
+    },
+    logoutButton: {
+        padding: '8px 15px',
+        marginLeft: '10px',
+        backgroundColor: '#dc3545',
         color: 'white',
         border: 'none',
         borderRadius: '4px',
@@ -155,6 +166,12 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('userId');
+        navigate('/');
+    };
 
     const fetchProducts = async () => {
         try {
@@ -227,6 +244,9 @@ const Home = () => {
                     <Link to="/orders">
                         <button style={styles.navButton}>Orders</button>
                     </Link>
+                    <button onClick={handleLogout} style={styles.logoutButton}>
+                        Logout
+                    </button>
                 </div>
             </header>
             <main style={styles.main}>
