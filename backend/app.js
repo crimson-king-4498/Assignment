@@ -12,32 +12,21 @@ import checkoutRouter from './controllers/checkout.js';
 
 const app = express();
 
-// --- FIX: Explicit CORS Configuration ---
-// The specific error "Redirect is not allowed for a preflight request" is often solved
-// by explicitly configuring the CORS origin and methods.
-
-// 1. Define the allowed origin(s).
-// We include both the local and deployed frontend origins for flexibility.
 const allowedOrigins = [
-    'http://localhost:5173', // From your .env (for local dev)
-    'https://ecomm-frontend-theta.vercel.app' // From the deployment screenshot (for production)
+    'http://localhost:5173',
+    'https://ecomm-frontend-theta.vercel.app'
 ];
 
 const corsOptions = {
-    // Check if the request origin is in our allowed list
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl) and the whitelisted origins
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
         }
     },
-    // Allows sending credentials (like cookies or Authorization headers)
     credentials: true,
-    // Explicitly allow all necessary methods, including OPTIONS for preflight requests
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    // Explicitly allow the required headers
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
@@ -53,13 +42,9 @@ mongoose.connect(config.MONGODB_URI)
         console.error('Error connecting to MongoDB. Check URI and Atlas IP Whitelist:', error.message);
     });
 
-// 2. Apply the configured CORS middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// 3. EXPLICIT OPTIONS ROUTE HANDLER (FINAL FIX)
-// Using a Regular Expression (/.*/) to correctly match all paths and bypass the
-// 'PathError: Missing parameter name' issue when using ES modules in Node.
 app.options(/.*/, cors(corsOptions)); 
 
 
