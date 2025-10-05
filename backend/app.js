@@ -16,14 +16,23 @@ const app = express();
 // The specific error "Redirect is not allowed for a preflight request" is often solved
 // by explicitly configuring the CORS origin and methods.
 
-// 1. Define the allowed origin. Ideally, this should be set in your Vercel
-// environment variables (e.g., process.env.FRONTEND_URL)
-// We use the URL from your error screenshot as the fallback default.
-const allowedOrigin = process.env.BASE_URL || 'https://ecomm-frontend-theta.vercel.app'; 
+// 1. Define the allowed origin(s).
+// We include both the local and deployed frontend origins for flexibility.
+const allowedOrigins = [
+    'http://localhost:5173', // From your .env (for local dev)
+    'https://ecomm-frontend-theta.vercel.app' // From the deployment screenshot (for production)
+];
 
 const corsOptions = {
-    // Only allow access from the deployed frontend URL
-    origin: allowedOrigin,
+    // Check if the request origin is in our allowed list
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl) and the whitelisted origins
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     // Allows sending credentials (like cookies or Authorization headers)
     credentials: true,
     // Explicitly allow all necessary methods, including OPTIONS for preflight requests
@@ -47,6 +56,12 @@ mongoose.connect(config.MONGODB_URI)
 // 2. Apply the configured CORS middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// 3. EXPLICIT OPTIONS ROUTE HANDLER (FINAL FIX)
+// Using a Regular Expression (/.*/) to correctly match all paths and bypass the
+// 'PathError: Missing parameter name' issue when using ES modules in Node.
+app.options(/.*/, cors(corsOptions)); 
+
 
 app.get('/', (req, res) => {
     res.status(200).send({
