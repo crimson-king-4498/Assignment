@@ -12,8 +12,17 @@ const Signup = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        // 1. Check if all fields are filled
         if (!name || !address || !emailID || !password) {
             setError('Please fill out all fields.');
+            setSuccess(null);
+            return;
+        }
+
+        // 2. Check for minimum password length (NEW VALIDATION)
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long.');
             setSuccess(null);
             return;
         }
@@ -22,6 +31,7 @@ const Signup = () => {
             const user = await signup({ name, address, emailID, password });
             setSuccess(`Success! User ${user.name} created. Please log in.`);
             setError(null);
+            // Clear the form fields upon successful signup
             setName('');
             setAddress('');
             setEmailID('');
@@ -161,8 +171,9 @@ const Signup = () => {
                             type="password" 
                             value={password} 
                             onChange={({ target }) => setPassword(target.value)} 
-                            placeholder="Create a strong password"
+                            placeholder="Create a strong password (min 8 characters)"
                             style={styles.input}
+                            minLength="8"
                         />
                     </div>
 
