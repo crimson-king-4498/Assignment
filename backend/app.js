@@ -12,6 +12,26 @@ import checkoutRouter from './controllers/checkout.js';
 
 const app = express();
 
+// --- FIX: Explicit CORS Configuration ---
+// The specific error "Redirect is not allowed for a preflight request" is often solved
+// by explicitly configuring the CORS origin and methods.
+
+// 1. Define the allowed origin. Ideally, this should be set in your Vercel
+// environment variables (e.g., process.env.FRONTEND_URL)
+// We use the URL from your error screenshot as the fallback default.
+const allowedOrigin = process.env.BASE_URL || 'https://ecomm-frontend-theta.vercel.app'; 
+
+const corsOptions = {
+    // Only allow access from the deployed frontend URL
+    origin: allowedOrigin,
+    // Allows sending credentials (like cookies or Authorization headers)
+    credentials: true,
+    // Explicitly allow all necessary methods, including OPTIONS for preflight requests
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    // Explicitly allow the required headers
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 if (!config.MONGODB_URI) {
     console.error('FATAL ERROR: MONGODB_URI is undefined. Check deployment environment variables.');
 }
@@ -24,7 +44,8 @@ mongoose.connect(config.MONGODB_URI)
         console.error('Error connecting to MongoDB. Check URI and Atlas IP Whitelist:', error.message);
     });
 
-app.use(cors());
+// 2. Apply the configured CORS middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/', (req, res) => {
