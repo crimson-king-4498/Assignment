@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3001/api/orderItems';
+const backendBaseUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const baseUrl = `${backendBaseUrl}/api/orderItems`;
 
 export const getOrderItems = async (orderId) => {
     const response = await fetch(`${baseUrl}/${orderId}`);

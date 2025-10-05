@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3001/api/checkout';
+const backendBaseUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const baseUrl = `${backendBaseUrl}/api/checkout`;
 
 export const checkout = async (userId) => {
     const response = await fetch(`${baseUrl}/${userId}`, {

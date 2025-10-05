@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3001/api/users';
+const backendBaseUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const baseUrl = `${backendBaseUrl}/api/users`;
 
 export const signup = async (credentials) => {
     const response = await fetch(`${baseUrl}/signup`, {

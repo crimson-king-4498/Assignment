@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3001/api/products';
+const backendBaseUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const baseUrl = `${backendBaseUrl}/api/products`;
 
 export const getAllProducts = async (params = {}) => {
     const filteredParams = Object.fromEntries(

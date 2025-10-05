@@ -1,4 +1,5 @@
-const baseUrl = 'http://localhost:3001/api/cart';
+const backendBaseUrl = import.meta.env.VITE_REACT_APP_BACKEND_BASEURL;
+const baseUrl = `${backendBaseUrl}/api/cart`;
 
 export const getCartItems = async (userId) => {
     const response = await fetch(`${baseUrl}/${userId}`);
