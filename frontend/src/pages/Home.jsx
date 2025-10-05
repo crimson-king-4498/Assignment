@@ -249,7 +249,7 @@ const Home = () => {
                         <option value="Jeans">Jeans</option>
                         <option value="Shirt">Shirt</option>
                         <option value="T-shirt">T-shirt</option>
-                        <option value="Pants">Pants</option>
+                        <option value="Pant">Pants</option>
                     </select>
                     
                     <select 
