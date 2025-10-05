@@ -13,11 +13,11 @@
 ## CartItem
 
 -   **product**: Product
+-   **productName**: string
 -   **price**: Number
 -   **quantity**: Number
 -   **size**: String (S/M/L)
 -   **gift**: Boolean (wrapped/not wrapped)
--   **TotalPrice**: Number (quantity * price + (gift ? some_value : 0))
 
 ## Order
 
