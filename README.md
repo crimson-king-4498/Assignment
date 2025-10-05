@@ -32,15 +32,22 @@ The platform is designed with two primary user roles: **Customer** and **Adminis
 * **Authentication:**
   * **Sign-Up/Registration:** Create a new customer account.
   * **Login/Logout:** Access and exit the customer account.
+
 * **Product Browsing:**
   * View a catalog of all available **clothing products**.
+  * **Search:** Quickly find products by name or keyword.
+  * **Filter:** Narrow down products based on **type of clothing** (e.g., shirts, trousers, jackets, etc.).
+  * **Sort:** Arrange products based on **price** — either from low to high or high to low.
+
 * **Shopping Cart Management (CRUD Operations):**
   * **Create:** Add a product to the cart.
   * **Read:** View all items currently in the cart (cart summary).
   * **Update:** Modify the quantity of an item in the cart.
   * **Delete:** Remove an item from the cart.
+
 * **Checkout:**
   * Finalize the order and complete the transaction.
+
 
 ### 🧑‍💼 Administrator Features
 
