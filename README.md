@@ -61,5 +61,5 @@ The platform is designed with two primary user roles: **Customer** and **Adminis
 
 **Frontend:** React.js, React Router, Fetch API
 **Backend:** Node.js, Express.js  
-**Database:** MongoDB (Mongoose ODM)  
+**Database:** MongoDB
 **Hosting:** Vercel
